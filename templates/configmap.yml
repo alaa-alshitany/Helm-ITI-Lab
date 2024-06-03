@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- template "labels" . }}
+  name: bakehouse
+data:
+{{- range $index, $element := .Values.configMap.data }}
+  item{{ $index }}: {{ $element }}
+{{- end }}

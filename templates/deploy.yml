@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ camelcase .Values.metadata.name }}
+{{  template "labels" . }}
+
+{{- if eq .Values.metadata.env "dev" }}
+  name: {{ .Release.Name }}-{{ .Values.metadata.name }}-{{ .Values.metadata.env }}
+{{- else if eq .Values.metadata.env "test" }}
+  name: {{ .Release.Name }}-{{.Values.metadata.name}}-{{ .Values.metadata.env }}
+{{- else if eq .Values.metadata.env "prod" }}
+  name: {{ .Release.Name }}-{{.Values.metadata.name}}-{{ .Values.metadata.env }}
+{{- else }}
+  name: {{ .Release.Name }}-{{.Values.metadata.name}}
+{{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.metadata.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.metadata.name}}
+        {{- include "labels" . | indent 4 }}
+    spec:
+      containers:
+      - image: kareemelkasaby/bakehouseitisohag
+        name: bakehouse
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources: {}
